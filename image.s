@@ -47,14 +47,22 @@ render_image:
 
 color_at_index: ; little endian RGB
     mov rax, rdi
-    mov rdx, 255
-    mul rdx
     xor edx, edx
-    mov rdi, image_width * image_height - 1
-    div rdi
-    mov dil, al
-    shl eax, 8
-    mov al, dil
-    shl eax, 8
-    mov al, dil
+    mov rsi, image_width
+    div rsi
+    mov rcx, rdx
+    mov rsi, 255
+    mul rsi
+    xor edx, edx
+    mov rsi, image_height - 1
+    div rsi
+    xchg rax, rcx
+    mov rsi, 255
+    mul rsi
+    xor edx, edx
+    mov rsi, image_width - 1
+    div rsi
+    shl eax, 24
+    shr eax, 16
+    mov al, cl
     ret
