@@ -6,6 +6,7 @@ global _start
 %include "macros.s"
 %include "options.s"
 %include "image.s"
+%include "color.s"
 
 section .text
 _start:
