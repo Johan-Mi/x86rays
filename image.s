@@ -61,8 +61,7 @@ color_at_index: ; little endian RGB
     divps xmm0, xmm2
     vbroadcastss xmm2, [.tan_vfov]
     mulps xmm0, xmm2
-    vbroadcastss xmm1, [.f1]
-    movq xmm1, xmm0
+    vpinsrd xmm1, xmm0, [.f1], 2
     movaps xmm0, [camera_position]
     call color_at_ray
     jmp gamma_correct
