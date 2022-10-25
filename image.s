@@ -46,23 +46,30 @@ render_image:
     ret
 
 color_at_index: ; little endian RGB
-    mov rax, rdi
+    mov eax, edi
     xor edx, edx
-    mov rsi, image_width
-    div rsi
-    mov rcx, rdx
-    mov rsi, 255
-    mul rsi
-    xor edx, edx
-    mov rsi, image_height - 1
-    div rsi
-    xchg rax, rcx
-    mov rsi, 255
-    mul rsi
-    xor edx, edx
-    mov rsi, image_width - 1
-    div rsi
-    shl eax, 24
-    shr eax, 16
-    mov al, cl
+    mov esi, image_width
+    div esi
+    sub eax, image_height / 2
+    sub edx, image_width / 2
+    cvtsi2ss xmm0, eax
+    psllq xmm0, 32
+    cvtsi2ss xmm0, edx
+    mov eax, image_height
+    cvtsi2ss xmm2, eax
+    movsldup xmm2, xmm2
+    divps xmm0, xmm2
+    vbroadcastss xmm2, [.tan_vfov]
+    mulps xmm0, xmm2
+    vbroadcastss xmm1, [.f1]
+    movq xmm1, xmm0
+    movaps xmm0, [camera_position]
+    call color_at_ray
+    jmp gamma_correct
+align 4
+.tan_vfov: dd tan_vfov
+.f1: dd __?float32?__(1.0)
+
+color_at_ray:
+    movaps xmm0, xmm1
     ret
