@@ -4,7 +4,7 @@ LDFLAGS := -nostdlib -g
 
 all: main
 
-main.o: constants.s macros.s options.s image.s color.s
+main.o: constants.s macros.s options.s image.s color.s shapes/sphere.s
 
 %: %.s
 

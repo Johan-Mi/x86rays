@@ -7,6 +7,7 @@ global _start
 %include "options.s"
 %include "image.s"
 %include "color.s"
+%include "shapes/sphere.s"
 
 section .text
 _start:

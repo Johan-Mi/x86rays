@@ -5,6 +5,9 @@ ppm_header_len equ $-ppm_header
 section .bss
 image_buffer: resb image_width * image_height * 3
 image_buffer_len equ $-image_buffer
+align 4
+t_min: resd 1
+t_max: resd 1
 
 section .text
 write_image:
@@ -70,5 +73,19 @@ align 4
 .f1: dd __?float32?__(1.0)
 
 color_at_ray:
-    movaps xmm0, xmm1
+    mov eax, [near_plane]
+    mov [t_min], eax
+    mov eax, [far_plane]
+    mov [t_max], eax
+    movaps xmm2, [.sphere]
+    call hit_sphere
+    movaps xmm0, [.blue]
+    test al, al
+    jz .no_hit
+    movaps xmm0, [.red]
+.no_hit:
     ret
+align 16
+.sphere: dd 0.0, 0.0, 5.0, 1.0
+.blue: dd 0.5, 0.7, 1.0, 0.0
+.red: dd 1.0, 0.0, 0.0, 0.0
