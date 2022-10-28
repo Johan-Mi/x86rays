@@ -8,8 +8,7 @@ hit_sphere:
     vdpps xmm5, xmm2, xmm2, 0b10000001
     subss xmm3, xmm5
     vdpps xmm5, xmm1, xmm1, 0b01110001 ; a
-    mulss xmm3, xmm5
-    subss xmm6, xmm3 ; discriminant
+    vfnmadd231ss xmm6, xmm3, xmm5 ; discriminant
     comiss xmm6, [.f0]
     jb .done ; no intersection
     sqrtss xmm7, xmm6
