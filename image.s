@@ -70,7 +70,7 @@ color_at_index: ; little endian RGB
     jmp gamma_correct
 align 4
 .tan_vfov: dd tan_vfov
-.f1: dd __?float32?__(1.0)
+.f1: dd 1.0
 
 color_at_ray:
     mov eax, [near_plane]

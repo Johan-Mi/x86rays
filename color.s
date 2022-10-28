@@ -15,7 +15,7 @@ gamma_correct:
     pshufb xmm0, [.shuffle]
     movd eax, xmm0
     ret
-.f1: dd __?float32?__(1.0)
-.f255: dd __?float32?__(255.0)
+.f1: dd 1.0
+.f255: dd 255.0
 align 16
 .shuffle: dq 0x8080808080080400, 0x8080808080808080

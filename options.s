@@ -9,7 +9,7 @@ near_plane: dd 0.001
 far_plane: dd __?Infinity?__
 align 16
 camera_position:
-    camera_x: dd __?float32?__(0.0)
-    camera_y: dd __?float32?__(0.0)
-    camera_z: dd __?float32?__(0.0)
+    camera_x: dd 0.0
+    camera_y: dd 0.0
+    camera_z: dd 0.0
     dd 0
