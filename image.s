@@ -58,7 +58,7 @@ color_at_index: ; little endian RGB
     cvtsi2ss xmm0, eax
     psllq xmm0, 32
     cvtsi2ss xmm0, edx
-    mov eax, image_height
+    mov eax, image_height / 2
     cvtsi2ss xmm2, eax
     movsldup xmm2, xmm2
     divps xmm0, xmm2
