@@ -55,16 +55,16 @@ color_at_index: ; little endian RGB
     div esi
     sub eax, image_height / 2
     sub edx, image_width / 2
-    cvtsi2ss xmm0, eax
-    psllq xmm0, 32
-    cvtsi2ss xmm0, edx
+    cvtsi2ss xmm1, eax
+    psllq xmm1, 32
+    cvtsi2ss xmm1, edx
     mov eax, image_height / 2
     cvtsi2ss xmm2, eax
     movsldup xmm2, xmm2
-    divps xmm0, xmm2
+    divps xmm1, xmm2
     vbroadcastss xmm2, [.tan_vfov]
-    mulps xmm0, xmm2
-    vpinsrd xmm1, xmm0, [.f1], 2
+    mulps xmm1, xmm2
+    insertps xmm1, [.f1], 0b00100000
     movaps xmm0, [camera_position]
     call color_at_ray
     jmp gamma_correct
