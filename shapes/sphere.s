@@ -11,15 +11,15 @@ hit_sphere:
     vfnmadd231ss xmm6, xmm3, xmm5 ; discriminant
     comiss xmm6, [.f0]
     jb .done ; no intersection
-    sqrtss xmm7, xmm6
-    vsubss xmm3, xmm4, xmm7
+    sqrtss xmm6, xmm6
+    vsubss xmm3, xmm4, xmm6
     divss xmm3, xmm5 ; root
     comiss xmm3, [t_min]
     jb .recalculate_root ; intersection out of range
     comiss xmm3, [t_max]
     jb .valid_intersection
 .recalculate_root:
-    vaddss xmm3, xmm4, xmm7
+    vaddss xmm3, xmm4, xmm6
     divss xmm3, xmm5 ; root
     comiss xmm3, [t_min]
     jb .done ; intersection out of range
