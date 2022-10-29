@@ -96,7 +96,7 @@ color_at_ray:
     movaps xmm0, [.blue]
     dec dword [hit_index]
     js .no_hit
-    movaps xmm0, [.red]
+    mulps xmm0, [.red]
 .no_hit:
     ret
 align 16
