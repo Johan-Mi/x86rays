@@ -30,12 +30,13 @@ write_image:
 
 render_image:
     push rbx
+    push rbp
     lea rbx, [image_buffer]
-    push qword image_width * image_height - 1
+    mov rbp, image_width * image_height - 1
 .loop:
-    mov rdi, [rsp]
+    mov rdi, rbp
     call color_at_index
-    mov rdi, [rsp]
+    mov rdi, rbp
     lea rdi, [rdi*3]
     add rdi, rbx
     stosb
@@ -43,9 +44,9 @@ render_image:
     stosb
     shr eax, 8
     stosb
-    dec qword [rsp]
+    dec rbp
     jns .loop
-    add rsp, 8
+    pop rbp
     pop rbx
     ret
 
