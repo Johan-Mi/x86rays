@@ -55,6 +55,7 @@ color_at_index: ; little endian RGB
     div esi
     sub eax, image_height / 2
     sub edx, image_width / 2
+    neg eax
     cvtsi2ss xmm1, eax
     psllq xmm1, 32
     cvtsi2ss xmm1, edx
