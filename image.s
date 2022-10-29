@@ -32,19 +32,19 @@ render_image:
     push rbx
     push rbp
     lea rbx, [image_buffer]
-    mov rbp, image_width * image_height - 1
+    mov ebp, image_width * image_height - 1
 .loop:
-    mov rdi, rbp
+    mov edi, ebp
     call color_at_index
-    mov rdi, rbp
-    lea rdi, [rdi*3]
+    mov edi, ebp
+    lea edi, [edi*3]
     add rdi, rbx
     stosb
     shr eax, 8
     stosb
     shr eax, 8
     stosb
-    dec rbp
+    dec ebp
     jns .loop
     pop rbp
     pop rbx
