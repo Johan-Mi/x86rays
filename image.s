@@ -8,6 +8,7 @@ image_buffer_len equ $-image_buffer
 align 4
 t_min: resd 1
 t_max: resd 1
+hit_index: resd 1
 
 section .text
 write_image:
@@ -74,19 +75,33 @@ align 4
 .f1: dd 1.0
 
 color_at_ray:
+    mov dword [hit_index], 0
     mov eax, [near_plane]
     mov [t_min], eax
     mov eax, [far_plane]
     mov [t_max], eax
-    movaps xmm2, [.sphere]
+    mov edi, 1
+    movaps xmm2, [.sphere1]
+    call hit_sphere
+    mov edi, 2
+    movaps xmm2, [.sphere2]
+    call hit_sphere
+    mov edi, 3
+    movaps xmm2, [.sphere3]
+    call hit_sphere
+    mov edi, 4
+    movaps xmm2, [.sphere4]
     call hit_sphere
     movaps xmm0, [.blue]
-    test al, al
-    jz .no_hit
+    dec dword [hit_index]
+    js .no_hit
     movaps xmm0, [.red]
 .no_hit:
     ret
 align 16
-.sphere: dd 0.0, 0.0, 5.0, 1.0
+.sphere1: dd 0.0, 0.0, 5.0, 1.0
+.sphere2: dd -2.0, -0.25, 4.0, 0.75
+.sphere3: dd 2.0, -0.25, 4.0, 0.75
+.sphere4: dd 0.0, -101.0, 0.0, 100.0
 .blue: dd 0.5, 0.7, 1.0, 0.0
 .red: dd 1.0, 0.0, 0.0, 0.0

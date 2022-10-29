@@ -1,5 +1,4 @@
 hit_sphere:
-    xor eax, eax
     vsubps xmm3, xmm0, xmm2
     vdpps xmm4, xmm3, xmm1, 0b01110001
     xorps xmm4, [.flip_low_sign] ; half-b
@@ -26,7 +25,7 @@ hit_sphere:
     comiss xmm3, [t_max]
     ja .done ; intersection out of range
 .valid_intersection:
-    mov eax, 1
+    mov [hit_index], edi
     movss [t_max], xmm3
     vbroadcastss xmm3, xmm3
     vfmadd231ps xmm0, xmm1, xmm3 ; hit position
