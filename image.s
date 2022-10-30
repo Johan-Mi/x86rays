@@ -5,10 +5,13 @@ ppm_header_len equ $-ppm_header
 section .bss
 image_buffer: resb image_width * image_height * 3
 image_buffer_len equ $-image_buffer
-align 4
+alignb 4
 t_min: resd 1
 t_max: resd 1
 hit_index: resd 1
+alignb 16
+hit_position: resd 4
+hit_normal: resd 4
 
 section .text
 write_image:
@@ -81,10 +84,15 @@ align 4
 .f1: dd 1.0
 
 color_at_ray:
-    sub rsp, 8
-    mov dword [hit_index], 0
+    push rbx
+    mov rbx, max_depth
+    sub rsp, 16
+    movaps xmm2, [.blue]
+    movaps [rsp], xmm2
     mov eax, [near_plane]
     mov [t_min], eax
+.loop:
+    mov dword [hit_index], 0
     mov eax, [far_plane]
     mov [t_max], eax
     mov edi, 1
@@ -99,12 +107,22 @@ color_at_ray:
     mov edi, 4
     movaps xmm2, [.sphere4]
     call hit_sphere
-    movaps xmm0, [.blue]
     dec dword [hit_index]
     js .no_hit
+    movaps xmm0, [rsp]
     mulps xmm0, [.red]
+    movaps [rsp], xmm0
+    call scatter_lambertian
+    movaps xmm1, xmm0
+    movaps xmm0, [hit_position]
+    dec rbx
+    jnz .loop
+    mov qword [rsp], 0
+    mov qword [rsp+8], 0
 .no_hit:
-    add rsp, 8
+    movaps xmm0, [rsp]
+    add rsp, 16
+    pop rbx
     ret
 align 16
 .sphere1: dd 0.0, 0.0, 5.0, 1.0
@@ -112,4 +130,4 @@ align 16
 .sphere3: dd 2.0, -0.25, 4.0, 0.75
 .sphere4: dd 0.0, -101.0, 0.0, 100.0
 .blue: dd 0.5, 0.7, 1.0, 0.0
-.red: dd 1.0, 0.0, 0.0, 0.0
+.red: dd 0.9, 0.0, 0.0, 0.0

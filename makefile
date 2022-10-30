@@ -4,7 +4,7 @@ LDFLAGS := -nostdlib -g
 
 all: main
 
-main.o: constants.s macros.s options.s image.s color.s shapes/sphere.s
+main.o: $(shell find -name '*.s')
 
 %: %.s
 

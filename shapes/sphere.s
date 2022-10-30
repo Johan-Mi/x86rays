@@ -1,3 +1,4 @@
+section .text
 hit_sphere:
     vsubps xmm3, xmm0, xmm2
     vdpps xmm4, xmm3, xmm1, 0b01110001
@@ -28,10 +29,12 @@ hit_sphere:
     mov [hit_index], edi
     movss [t_max], xmm3
     vbroadcastss xmm3, xmm3
-    vfmadd231ps xmm0, xmm1, xmm3 ; hit position
-    vsubps xmm1, xmm0, xmm2
+    vfmadd132ps xmm3, xmm0, xmm1
+    movaps [hit_position], xmm3
+    subps xmm3, xmm2
     pshufd xmm2, xmm2, 0b11111111
-    divps xmm1, xmm2 ; hit normal
+    divps xmm3, xmm2
+    movaps [hit_normal], xmm3
 .done:
     ret
 align 16
