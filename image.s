@@ -29,6 +29,7 @@ write_image:
     ret
 
 render_image:
+    sub rsp, 8
     push rbx
     push rbp
     lea rbx, [image_buffer]
@@ -48,6 +49,7 @@ render_image:
     jns .loop
     pop rbp
     pop rbx
+    add rsp, 8
     ret
 
 color_at_index: ; little endian RGB
@@ -69,13 +71,17 @@ color_at_index: ; little endian RGB
     mulps xmm1, xmm2
     insertps xmm1, [.f1], 0b00100000
     movaps xmm0, [camera_position]
+    sub rsp, 8
     call color_at_ray
-    jmp gamma_correct
+    call gamma_correct
+    add rsp, 8
+    ret
 align 4
 .tan_vfov: dd tan_vfov
 .f1: dd 1.0
 
 color_at_ray:
+    sub rsp, 8
     mov dword [hit_index], 0
     mov eax, [near_plane]
     mov [t_min], eax
@@ -98,6 +104,7 @@ color_at_ray:
     js .no_hit
     mulps xmm0, [.red]
 .no_hit:
+    add rsp, 8
     ret
 align 16
 .sphere1: dd 0.0, 0.0, 5.0, 1.0
