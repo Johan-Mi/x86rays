@@ -87,7 +87,7 @@ color_at_ray:
     push rbx
     mov rbx, max_depth
     sub rsp, 16
-    movaps xmm2, [.blue]
+    movaps xmm2, [.sky]
     movaps [rsp], xmm2
     mov eax, [near_plane]
     mov [t_min], eax
@@ -109,8 +109,11 @@ color_at_ray:
     call hit_sphere
     dec dword [hit_index]
     js .no_hit
+    mov eax, [hit_index]
+    shl eax, 1
+    lea rdi, [.object_colors]
     movaps xmm0, [rsp]
-    mulps xmm0, [.red]
+    mulps xmm0, [rdi+rax*8]
     movaps [rsp], xmm0
     call scatter_lambertian
     movaps xmm1, xmm0
@@ -129,5 +132,9 @@ align 16
 .sphere2: dd -2.0, -0.25, 4.0, 0.75
 .sphere3: dd 2.0, -0.25, 4.0, 0.75
 .sphere4: dd 0.0, -101.0, 0.0, 100.0
-.blue: dd 0.5, 0.7, 1.0, 0.0
-.red: dd 0.9, 0.0, 0.0, 0.0
+.sky: dd 0.5, 0.7, 1.0, 0.0
+.object_colors:
+    dd 1.0, 1.0, 1.0, 0.0
+    dd 1.0, 0.3, 0.3, 0.0
+    dd 0.05, 0.05, 1.0, 0.0
+    dd 0.05, 1.0, 0.05, 0.0
