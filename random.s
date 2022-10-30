@@ -13,7 +13,7 @@ random_unit_vector:
     pand xmm0, xmm1
     vbroadcastss xmm1, [.exponent]
     por xmm0, xmm1
-    movss xmm1, [.f3]
+    vbroadcastss xmm1, [.f3]
     subps xmm0, xmm1
     ; Repeat until result is within the unit sphere
     dpps xmm1, xmm0, 0b01110001
