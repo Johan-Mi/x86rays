@@ -139,9 +139,9 @@ color_at_ray:
     mov eax, [hit_index]
     shl eax, 1
     lea rdi, [.object_colors]
-    movaps xmm0, [rsp]
-    mulps xmm0, [rdi+rax*8]
-    movaps [rsp], xmm0
+    movaps xmm2, [rsp]
+    mulps xmm2, [rdi+rax*8]
+    movaps [rsp], xmm2
     call scatter_lambertian
     movaps xmm1, xmm0
     movaps xmm0, [hit_position]
