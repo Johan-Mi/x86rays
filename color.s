@@ -52,3 +52,4 @@ fexp2:
     faddp
     fscale
     fstp st1
+    ret
