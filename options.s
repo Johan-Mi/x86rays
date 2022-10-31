@@ -8,6 +8,7 @@ image_file_path: db "image.ppm", 0
 align 4
 near_plane: dd 0.001
 far_plane: dd __?Infinity?__
+gamma: dd 2.2
 align 16
 camera_position:
     camera_x: dd 0.0

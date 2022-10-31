@@ -1,8 +1,22 @@
 gamma_correct:
-    ; TODO: Actually perform gamma correction instead of just naïvely clamping
-    ; each channel
-    ;
-    ; Clamp each component between 0 and 1
+    ; Raise each channel to 1/gamma
+    call log2ps
+    vbroadcastss xmm1, [gamma]
+    divps xmm0, xmm1
+    sub rsp, 24
+    movaps [rsp], xmm0
+    fld dword [rsp]
+    call fexp2
+    fstp dword [rsp]
+    fld dword [rsp+4]
+    call fexp2
+    fstp dword [rsp+4]
+    fld dword [rsp+8]
+    call fexp2
+    fstp dword [rsp+8]
+    movaps xmm0, [rsp]
+    add rsp, 24
+    ; Clamp each channel between 0 and 1
     pxor xmm1, xmm1
     maxps xmm0, xmm1
     vbroadcastss xmm1, [.f1]
