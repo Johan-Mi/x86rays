@@ -142,7 +142,11 @@ color_at_ray:
     movaps xmm2, [rsp]
     mulps xmm2, [rdi+rax*8]
     movaps [rsp], xmm2
-    call scatter_lambertian
+    lea rdi, [scatter_lambertian]
+    lea rsi, [scatter_metal]
+    cmp eax, 2
+    cmove rdi, rsi
+    call rdi
     movaps xmm1, xmm0
     movaps xmm0, [hit_position]
     dec rbx

@@ -10,6 +10,7 @@ global _start
 %include "random.s"
 %include "shapes/sphere.s"
 %include "materials/lambertian.s"
+%include "materials/metal.s"
 
 section .text
 _start:
