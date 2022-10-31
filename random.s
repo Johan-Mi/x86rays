@@ -40,11 +40,11 @@ random_qword:
     xor [.state+24], rdx
     shl rdx, 17
     mov rdi, [.state+16]
+    xor [.state+16], rdx
     xor [.state+8], rdi
     mov rdi, [.state+24]
-    xor [.state], rdi
-    xor [.state+16], rdx
     rol qword [.state+24], 45
+    xor [.state], rdi
     ret
 section .data
 align 8
