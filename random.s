@@ -3,7 +3,6 @@ random_unit_vector:
     vbroadcastss xmm3, [.mantissa_mask]
     vbroadcastss xmm4, [.exponent]
     vbroadcastss xmm5, [.f3]
-    movss xmm2, [.f1]
 .loop:
     ; Randomize each axis between -1 and 1
     call random_qwords
@@ -15,7 +14,7 @@ random_unit_vector:
     subps xmm0, xmm5
     ; Repeat until result is within the unit sphere
     dpps xmm1, xmm0, 0b01110001
-    comiss xmm1, xmm2
+    comiss xmm1, [.f1]
     ja .loop
     ; Normalize
     sqrtss xmm1, xmm1
