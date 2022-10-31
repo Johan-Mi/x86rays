@@ -76,9 +76,8 @@ color_at_index: ; little endian RGB
     movaps xmm0, [camera_position]
     sub rsp, 8
     call color_at_ray
-    call gamma_correct
     add rsp, 8
-    ret
+    jmp gamma_correct
 align 4
 .tan_vfov: dd tan_vfov
 .f1: dd 1.0
