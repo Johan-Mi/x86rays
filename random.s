@@ -2,6 +2,7 @@ section .text
 random_unit_vector:
     vbroadcastss xmm3, [.mantissa_mask]
     vbroadcastss xmm4, [.exponent]
+    vbroadcastss xmm5, [.f3]
     movss xmm2, [.f1]
 .loop:
     ; Randomize each axis between -1 and 1
@@ -11,8 +12,7 @@ random_unit_vector:
     psrlq xmm0, 3
     pand xmm0, xmm3
     por xmm0, xmm4
-    vbroadcastss xmm1, [.f3]
-    subps xmm0, xmm1
+    subps xmm0, xmm5
     ; Repeat until result is within the unit sphere
     dpps xmm1, xmm0, 0b01110001
     comiss xmm1, xmm2
@@ -24,7 +24,7 @@ random_unit_vector:
     ret
 align 4
 .f1: dd 1.0
-.f3: dd 2.0
+.f3: dd 3.0
 .mantissa_mask: dd (1 << 23) - 1
 .exponent: dd 0x40000000
 
