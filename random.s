@@ -13,7 +13,7 @@ random_unit_vector:
     por xmm0, xmm4
     subps xmm0, xmm5
     ; Repeat until result is within the unit sphere
-    dpps xmm1, xmm0, 0b01110001
+    vdpps xmm1, xmm0, xmm0, 0b01110001
     comiss xmm1, [.f1]
     ja .loop
     ; Normalize
