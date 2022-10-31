@@ -41,7 +41,7 @@ render_image:
     mov edi, ebp
     call color_at_index
     mov edi, ebp
-    lea edi, [edi*3]
+    lea edi, [rdi*3]
     add rdi, rbx
     stosb
     shr eax, 8
