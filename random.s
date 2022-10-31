@@ -1,20 +1,20 @@
 section .text
 random_unit_vector:
+    vbroadcastss xmm3, [.mantissa_mask]
+    vbroadcastss xmm4, [.exponent]
+    movss xmm2, [.f1]
 .loop:
     ; Randomize each axis between -1 and 1
     call random_qwords
     movq xmm0, rax
     pinsrq xmm0, rdx, 1
     psrlq xmm0, 3
-    vbroadcastss xmm1, [.mantissa_mask]
-    pand xmm0, xmm1
-    vbroadcastss xmm1, [.exponent]
-    por xmm0, xmm1
+    pand xmm0, xmm3
+    por xmm0, xmm4
     vbroadcastss xmm1, [.f3]
     subps xmm0, xmm1
     ; Repeat until result is within the unit sphere
     dpps xmm1, xmm0, 0b01110001
-    movss xmm2, [.f1]
     comiss xmm1, xmm2
     ja .loop
     ; Normalize
