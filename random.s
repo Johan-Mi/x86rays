@@ -2,12 +2,9 @@ section .text
 random_unit_vector:
 .loop:
     ; Randomize each axis between -1 and 1
-    call random_qword
-    push rax
-    call random_qword
+    call random_qwords
     movq xmm0, rax
-    pop rax
-    pinsrq xmm0, rax, 1
+    pinsrq xmm0, rdx, 1
     psrlq xmm0, 3
     vbroadcastss xmm1, [.mantissa_mask]
     pand xmm0, xmm1
@@ -31,16 +28,18 @@ align 4
 .mantissa_mask: dd (1 << 23) - 1
 .exponent: dd 0x40000000
 
-random_qword:
+random_qwords:
     ; Uses the xoshiro256+ algorithm. Lowest 3 bits have low randomness.
     mov rax, [.state]
+    mov rdx, [.state+8]
+    add rdx, [.state+16]
     xor [.state+16], rax
     add rax, [.state+24]
-    mov rdx, [.state+8]
-    xor [.state+24], rdx
-    shl rdx, 17
+    mov rsi, [.state+8]
+    xor [.state+24], rsi
+    shl rsi, 17
     mov rdi, [.state+16]
-    xor [.state+16], rdx
+    xor [.state+16], rsi
     xor [.state+8], rdi
     mov rdi, [.state+24]
     rol qword [.state+24], 45
