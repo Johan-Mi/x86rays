@@ -56,6 +56,7 @@ render_image:
     ret
 
 color_at_index: ; little endian RGB
+    push rbx
     mov eax, edi
     xor edx, edx
     mov esi, image_width
@@ -66,21 +67,48 @@ color_at_index: ; little endian RGB
     cvtsi2ss xmm1, eax
     psllq xmm1, 32
     cvtsi2ss xmm1, edx
-    mov eax, image_height / 2
-    cvtsi2ss xmm2, eax
+    push qword 0
+    push qword 0
+    sub rsp, 16
+    movaps [rsp], xmm1
+    mov ebx, samples_per_pixel
+.more_samples:
+    call random_qwords
+    vbroadcastss xmm3, [.mantissa_mask]
+    vbroadcastss xmm4, [.f1]
+    movaps xmm0, [camera_position]
+    movaps xmm1, [rsp]
+    movq xmm2, rax
+    psrlq xmm2, 3
+    pand xmm2, xmm3
+    por xmm2, xmm4
+    subps xmm2, xmm4
+    addps xmm1, xmm2
+    mov edi, image_height / 2
+    cvtsi2ss xmm2, edi
     movsldup xmm2, xmm2
     divps xmm1, xmm2
     vbroadcastss xmm2, [.tan_vfov]
     mulps xmm1, xmm2
     insertps xmm1, [.f1], 0b00100000
-    movaps xmm0, [camera_position]
-    sub rsp, 8
     call color_at_ray
-    add rsp, 8
+    movaps xmm1, [rsp+16]
+    addps xmm1, xmm0
+    movaps [rsp+16], xmm1
+    dec ebx
+    jnz .more_samples
+    mov eax, samples_per_pixel
+    cvtsi2ss xmm1, eax
+    vbroadcastss xmm1, xmm1
+    movaps xmm0, [rsp+16]
+    divps xmm0, xmm1
+    add rsp, 32
+    pop rbx
     jmp gamma_correct
 align 4
 .tan_vfov: dd tan_vfov
 .f1: dd 1.0
+.mantissa_mask: dd (1 << 23) - 1
 
 color_at_ray:
     push rbx
