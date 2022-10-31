@@ -74,11 +74,7 @@ color_at_index: ; little endian RGB
     mulps xmm1, xmm2
     insertps xmm1, [.f1], 0b00100000
     movaps xmm0, [camera_position]
-    sub rsp, 8
-    call color_at_ray
-    call gamma_correct
-    add rsp, 8
-    ret
+    jmp color_at_ray
 align 4
 .tan_vfov: dd tan_vfov
 .f1: dd 1.0
@@ -126,7 +122,7 @@ color_at_ray:
     movaps xmm0, [rsp]
     add rsp, 16
     pop rbx
-    ret
+    jmp gamma_correct
 align 16
 .sphere1: dd 0.0, 0.0, 5.0, 1.0
 .sphere2: dd -2.0, -0.25, 4.0, 0.75
