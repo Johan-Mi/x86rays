@@ -1,18 +1,15 @@
 gamma_correct:
     ; Raise each channel to 1/gamma
-    call log2ps
-    vbroadcastss xmm1, [gamma]
-    divps xmm0, xmm1
     sub rsp, 24
     movaps [rsp], xmm0
     fld dword [rsp]
-    call fexp2
+    call raise_to_inv_gamma
     fstp dword [rsp]
     fld dword [rsp+4]
-    call fexp2
+    call raise_to_inv_gamma
     fstp dword [rsp+4]
     fld dword [rsp+8]
-    call fexp2
+    call raise_to_inv_gamma
     fstp dword [rsp+8]
     movaps xmm0, [rsp]
     add rsp, 24
@@ -62,26 +59,12 @@ align 16
 .shuffle: dq 0x8080808080080400, 0x8080808080808080
 .luma_coefficients: dd 0.299, 0.587, 0.114, 0.0
 
-log2ps:
-    vpsrld xmm1, xmm0, 23
-    vpbroadcastd xmm2, [.exponent_bias]
-    psubd xmm1, xmm2
-    pslld xmm0, 9
-    psrld xmm0, 9
-    vpbroadcastd xmm2, [.leading_one]
-    por xmm0, xmm2
-    cvtdq2ps xmm0, xmm0
-    cvtdq2ps xmm1, xmm1
-    mulps xmm0, xmm1
-    vbroadcastss xmm1, [.mantissa_scale]
-    divps xmm0, xmm1
-    ret
-align 4
-.exponent_bias: dd 127
-.leading_one: dd 1 << 24
-.mantissa_scale: dd eval(1 << 24) %+ .0
-
-fexp2:
+raise_to_inv_gamma:
+    fld1
+    fld dword [gamma]
+    fdivp
+    fxch
+    fyl2x
     fstcw [rsp-2]
     or word [rsp-2], 0b11 << 10 ; Round towards zero
     fldcw [rsp-2]
