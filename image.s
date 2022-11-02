@@ -5,6 +5,7 @@ ppm_header_len equ $-ppm_header
 section .bss
 image_buffer: resb image_width * image_height * 3
 image_buffer_len equ $-image_buffer
+hit_front_face: resb 1
 alignb 4
 t_min: resd 1
 t_max: resd 1
@@ -136,16 +137,30 @@ color_at_ray:
     call hit_sphere
     dec dword [hit_index]
     js .no_hit
+    xorps xmm3, xmm3
+    vdpps xmm2, xmm1, [hit_normal], 0b01110001
+    comiss xmm2, xmm3
+    setb [hit_front_face]
+    jb .hit_front_face
+    ; Ensure that hit normal points outward
+    vbroadcastss xmm2, [.sign_bit]
+    xorps xmm2, [hit_normal]
+    movaps [hit_normal], xmm2
+.hit_front_face:
     mov eax, [hit_index]
     shl eax, 1
     lea rdi, [.object_colors]
-    movaps xmm2, [rsp]
-    mulps xmm2, [rdi+rax*8]
-    movaps [rsp], xmm2
+    movaps xmm2, [rdi+rax*8]
+    movaps xmm3, [rsp]
+    mulps xmm3, xmm2
+    movaps [rsp], xmm3
     lea rdi, [scatter_lambertian]
     lea rsi, [scatter_metal]
+    lea rcx, [scatter_dielectric]
     cmp eax, 2
     cmove rdi, rsi
+    test eax, eax
+    cmove rdi, rcx
     call rdi
     movaps xmm1, xmm0
     movaps xmm0, [hit_position]
@@ -158,6 +173,8 @@ color_at_ray:
     add rsp, 16
     pop rbx
     ret
+align 4
+.sign_bit: dd 1 << 31
 align 16
 .sphere1: dd 0.0, 0.0, 5.0, 1.0
 .sphere2: dd -2.0, -0.25, 4.0, 0.75
@@ -165,7 +182,7 @@ align 16
 .sphere4: dd 0.0, -101.0, 0.0, 100.0
 .sky: dd 0.5, 0.7, 1.0, 0.0
 .object_colors:
-    dd 1.0, 1.0, 1.0, 0.0
+    dd 1.0, 1.0, 1.0, 1.5
     dd 1.0, 0.3, 0.3, 0.0
     dd 0.05, 0.05, 1.0, 0.0
     dd 0.05, 1.0, 0.05, 0.0

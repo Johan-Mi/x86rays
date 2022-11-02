@@ -11,6 +11,7 @@ global _start
 %include "shapes/sphere.s"
 %include "materials/lambertian.s"
 %include "materials/metal.s"
+%include "materials/dielectric.s"
 
 section .text
 _start:
