@@ -28,13 +28,13 @@ gamma_correct:
     extractps eax, xmm3, 1
     test al, al
     jz .dont_clamp_g
-    shufps xmm6, xmm2, 0b01010101
+    vpermilps xmm6, xmm2, 0b01010101
     minss xmm5, xmm6
 .dont_clamp_g:
     extractps eax, xmm3, 2
     test al, al
     jz .dont_clamp_b
-    shufps xmm6, xmm2, 0b10101010
+    vpermilps xmm6, xmm2, 0b10101010
     minss xmm5, xmm6
 .dont_clamp_b:
     vbroadcastss xmm5, xmm5

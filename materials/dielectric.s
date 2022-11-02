@@ -5,7 +5,7 @@ scatter_dielectric:
     vbroadcastss xmm3, xmm3
     divps xmm1, xmm3
     movss xmm3, [.f1]
-    shufps xmm2, xmm2, 0b11111111 ; Refraction ratio
+    vpermilps xmm2, xmm2, 0b11111111 ; Refraction ratio
     test byte [hit_front_face], 1
     jnz .hit_front_face
     vdivss xmm2, xmm3, xmm2 ; Refraction ratio

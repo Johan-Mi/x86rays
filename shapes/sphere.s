@@ -32,7 +32,7 @@ hit_sphere:
     vfmadd132ps xmm3, xmm0, xmm1
     movaps [hit_position], xmm3
     vsubps xmm3, xmm2, xmm3
-    pshufd xmm2, xmm2, 0b11111111
+    vpermilps xmm2, xmm2, 0b11111111
     divps xmm3, xmm2
     movaps [hit_normal], xmm3
 .done:
