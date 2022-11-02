@@ -151,8 +151,7 @@ color_at_ray:
     shl eax, 1
     lea rdi, [.object_colors]
     movaps xmm2, [rdi+rax*8]
-    movaps xmm3, [rsp]
-    mulps xmm3, xmm2
+    vmulps xmm3, xmm2, [rsp]
     movaps [rsp], xmm3
     lea rdi, [scatter_lambertian]
     lea rsi, [scatter_metal]
