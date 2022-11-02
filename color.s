@@ -39,8 +39,7 @@ gamma_correct:
 .dont_clamp_b:
     vbroadcastss xmm5, xmm5
     subps xmm0, xmm1
-    mulps xmm0, xmm5
-    addps xmm0, xmm1
+    vfmadd132ps xmm0, xmm1, xmm5
     ; Clamp each channel between 0 and 1
     pxor xmm1, xmm1
     maxps xmm0, xmm1

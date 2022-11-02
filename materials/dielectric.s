@@ -15,8 +15,8 @@ scatter_dielectric:
     vdpps xmm4, xmm1, [hit_normal], 0b01110001
     xorps xmm4, xmm5 ; Cos theta
     minss xmm4, xmm3
-    vmulss xmm5, xmm4, xmm4
-    vsubss xmm5, xmm3, xmm5
+    movaps xmm5, xmm4
+    vfnmadd132ps xmm5, xmm3, xmm4
     sqrtss xmm5, xmm5 ; Sin theta
     mulss xmm5, xmm2
     comiss xmm5, xmm3
@@ -48,15 +48,13 @@ scatter_dielectric:
     andps xmm0, xmm5
     sqrtss xmm0, xmm0
     vbroadcastss xmm0, xmm0
-    mulps xmm0, [hit_normal]
-    vsubps xmm0, xmm4, xmm0
+    vfnmadd132ps xmm0, xmm4, [hit_normal]
     ret
 .reflect:
     vdpps xmm0, xmm1, [hit_normal], 0b01110001
     mulss xmm0, [.fm2]
     vbroadcastss xmm0, xmm0
-    mulps xmm0, [hit_normal]
-    addps xmm0, xmm1
+    vfmadd132ps xmm0, xmm1, [hit_normal]
     ret
 align 4
 .f1: dd 1.0
