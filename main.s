@@ -8,6 +8,7 @@ global _start
 %include "image.s"
 %include "color.s"
 %include "random.s"
+%include "scene.s"
 %include "shapes/sphere.s"
 %include "materials/lambertian.s"
 %include "materials/metal.s"
@@ -15,6 +16,7 @@ global _start
 
 section .text
 _start:
+    call set_up_scene
     call render_image
     call write_image
     mov eax, SYS_EXIT

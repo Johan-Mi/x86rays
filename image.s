@@ -113,9 +113,10 @@ align 4
 
 color_at_ray:
     push rbx
+    push rbp
     mov rbx, max_depth
-    sub rsp, 16
-    movaps xmm2, [.sky]
+    sub rsp, 24
+    movaps xmm2, [sky_color]
     movaps [rsp], xmm2
     mov eax, [near_plane]
     mov [t_min], eax
@@ -123,18 +124,17 @@ color_at_ray:
     mov dword [hit_index], 0
     mov eax, [far_plane]
     mov [t_max], eax
-    mov edi, 1
-    movaps xmm2, [.sphere1]
-    call hit_sphere
-    mov edi, 2
-    movaps xmm2, [.sphere2]
-    call hit_sphere
-    mov edi, 3
-    movaps xmm2, [.sphere3]
-    call hit_sphere
-    mov edi, 4
-    movaps xmm2, [.sphere4]
-    call hit_sphere
+    mov rbp, materials-scene-32
+.more_shapes:
+    lea rdi, [scene]
+    lea rcx, [shape_pointers]
+    movaps xmm2, [rdi+rbp+16]
+    mov rsi, [rdi+rbp]
+    mov edi, [rdi+rbp+8]
+    inc edi
+    call [rcx+rsi*8]
+    sub rbp, 32
+    jns .more_shapes
     dec dword [hit_index]
     js .no_hit
     xorps xmm3, xmm3
@@ -147,20 +147,15 @@ color_at_ray:
     xorps xmm2, [hit_normal]
     movaps [hit_normal], xmm2
 .hit_front_face:
+    lea rdi, [materials]
     mov eax, [hit_index]
-    shl eax, 1
-    lea rdi, [.object_colors]
-    movaps xmm2, [rdi+rax*8]
+    lea rsi, [material_pointers]
+    shl eax, 2
+    movaps xmm2, [rdi+rax*8+16]
     vmulps xmm3, xmm2, [rsp]
     movaps [rsp], xmm3
-    lea rdi, [scatter_lambertian]
-    lea rsi, [scatter_metal]
-    lea rcx, [scatter_dielectric]
-    cmp eax, 2
-    cmove rdi, rsi
-    test eax, eax
-    cmove rdi, rcx
-    call rdi
+    mov rdi, [rdi+rax*8]
+    call [rsi+rdi*8]
     movaps xmm1, xmm0
     movaps xmm0, [hit_position]
     dec rbx
@@ -169,19 +164,9 @@ color_at_ray:
     mov qword [rsp+8], 0
 .no_hit:
     movaps xmm0, [rsp]
-    add rsp, 16
+    add rsp, 24
+    pop rbp
     pop rbx
     ret
 align 4
 .sign_bit: dd 1 << 31
-align 16
-.sphere1: dd 0.0, 0.0, 5.0, 1.0
-.sphere2: dd -2.0, -0.25, 4.0, 0.75
-.sphere3: dd 2.0, -0.25, 4.0, 0.75
-.sphere4: dd 0.0, -101.0, 0.0, 100.0
-.sky: dd 0.5, 0.7, 1.0, 0.0
-.object_colors:
-    dd 1.0, 1.0, 1.0, 1.5
-    dd 1.0, 0.3, 0.3, 0.0
-    dd 0.05, 0.05, 1.0, 0.0
-    dd 0.05, 1.0, 0.05, 0.0
