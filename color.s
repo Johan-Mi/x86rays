@@ -1,5 +1,8 @@
 gamma_correct:
     ; Raise each channel to 1/gamma
+    fld1
+    fld dword [gamma]
+    fdivp
     sub rsp, 24
     movaps [rsp], xmm0
     fld dword [rsp]
@@ -11,6 +14,7 @@ gamma_correct:
     fld dword [rsp+8]
     call raise_to_inv_gamma
     fstp dword [rsp+8]
+    fstp st0
     movaps xmm0, [rsp]
     add rsp, 24
     vbroadcastss xmm4, [.f1]
@@ -59,9 +63,7 @@ align 16
 .luma_coefficients: dd 0.299, 0.587, 0.114, 0.0
 
 raise_to_inv_gamma:
-    fld1
-    fld dword [gamma]
-    fdivp
+    fld st1
     fxch
     fyl2x
     fstcw [rsp-2]
