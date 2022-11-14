@@ -44,22 +44,17 @@ gamma_correct:
     vbroadcastss xmm5, xmm5
     subps xmm0, xmm1
     vfmadd132ps xmm0, xmm1, xmm5
-    ; Clamp each channel between 0 and 1
-    pxor xmm1, xmm1
-    maxps xmm0, xmm1
-    minps xmm0, xmm4
-    ; Scale up to 0-255
+    ; Scale up each channel to 0-255, convert to integers and pack into a dword
     vbroadcastss xmm1, [.f255]
     mulps xmm0, xmm1
     cvtps2dq xmm0, xmm0
-    ; Pack lowest byte of each channel into a 32-bit integer
-    pshufb xmm0, [.shuffle]
+    packusdw xmm0, xmm0
+    packuswb xmm0, xmm0
     movd eax, xmm0
     ret
 .f1: dd 1.0
 .f255: dd 255.0
 align 16
-.shuffle: dq 0x8080808080080400, 0x8080808080808080
 .luma_coefficients: dd 0.299, 0.587, 0.114, 0.0
 
 raise_to_inv_gamma:
