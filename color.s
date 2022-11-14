@@ -66,12 +66,10 @@ raise_to_inv_gamma:
     fld st1
     fxch
     fyl2x
-    fstcw [rsp-2]
-    or word [rsp-2], 0b11 << 10 ; Round towards zero
-    fldcw [rsp-2]
     fld st0
     fld st0
-    frndint
+    fisttp dword [rsp-4]
+    fild dword [rsp-4]
     fsubp
     f2xm1
     fld1
