@@ -11,12 +11,11 @@ scatter_dielectric:
     vdivss xmm2, xmm3, xmm2 ; Refraction ratio
     vbroadcastss xmm2, xmm2
 .hit_front_face:
-    movss xmm5, [.sign_bit]
-    vdpps xmm4, xmm1, [hit_normal], 0b01110001
-    xorps xmm4, xmm5 ; Cos theta
-    minss xmm4, xmm3
-    movaps xmm5, xmm4
-    vfnmadd132ps xmm5, xmm3, xmm4
+    movss xmm4, [.sign_bit]
+    vdpps xmm5, xmm1, [hit_normal], 0b01110001
+    xorps xmm5, xmm4 ; Cos theta
+    minss xmm5, xmm3
+    vfnmadd132ps xmm5, xmm3, xmm5
     sqrtss xmm5, xmm5 ; Sin theta
     mulss xmm5, xmm2
     comiss xmm5, xmm3
