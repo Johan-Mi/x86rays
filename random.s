@@ -17,9 +17,9 @@ random_unit_vector:
     comiss xmm1, [.f1]
     ja .loop
     ; Normalize
-    sqrtss xmm1, xmm1
+    rsqrtss xmm1, xmm1
     vbroadcastss xmm1, xmm1
-    divps xmm0, xmm1
+    mulps xmm0, xmm1
     ret
 align 4
 .f1: dd 1.0

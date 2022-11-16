@@ -1,9 +1,9 @@
 scatter_dielectric:
     ; Normalize ray direction
     vdpps xmm3, xmm1, xmm1, 0b01110001
-    sqrtss xmm3, xmm3
+    rsqrtss xmm3, xmm3
     vbroadcastss xmm3, xmm3
-    divps xmm1, xmm3
+    mulps xmm1, xmm3
     movss xmm3, [.f1]
     vpermilps xmm2, xmm2, 0b11111111 ; Refraction ratio
     test byte [hit_front_face], 1
