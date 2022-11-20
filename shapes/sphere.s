@@ -2,6 +2,9 @@ section .text
 hit_sphere:
     vsubps xmm3, xmm0, xmm2
     vdpps xmm4, xmm3, xmm1, 0b01110001
+    xorps xmm5, xmm5
+    ucomiss xmm4, xmm5
+    ja .done
     xorps xmm4, [.flip_low_sign] ; half-b
     vmulss xmm6, xmm4, xmm4
     dpps xmm3, xmm3, 0b01110001
