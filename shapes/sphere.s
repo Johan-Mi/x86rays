@@ -2,8 +2,8 @@ section .text
 hit_sphere:
     vsubps xmm3, xmm0, xmm2
     vdpps xmm4, xmm3, xmm1, 0b01110001
-    xorps xmm5, xmm5
-    ucomiss xmm4, xmm5
+    xorps xmm7, xmm7
+    ucomiss xmm4, xmm7
     ja .done
     xorps xmm4, [.flip_low_sign] ; half-b
     vmulss xmm6, xmm4, xmm4
@@ -12,7 +12,7 @@ hit_sphere:
     subss xmm3, xmm5
     vdpps xmm5, xmm1, xmm1, 0b01110001 ; a
     vfnmadd231ss xmm6, xmm3, xmm5 ; discriminant
-    comiss xmm6, [.f0]
+    comiss xmm6, xmm7
     jb .done ; no intersection
     sqrtss xmm6, xmm6
     vsubss xmm3, xmm4, xmm6
@@ -41,5 +41,4 @@ hit_sphere:
 .done:
     ret
 align 16
-.flip_low_sign: dd 1 << 31
-.f0: dd 0, 0, 0
+.flip_low_sign: dd 1 << 31, 0, 0, 0
