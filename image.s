@@ -41,8 +41,7 @@ render_image:
 .loop:
     mov edi, ebp
     call color_at_index
-    mov edi, ebp
-    lea edi, [rdi*3]
+    lea edi, [rbp*3]
     add rdi, rbx
     stosb
     shr eax, 8
